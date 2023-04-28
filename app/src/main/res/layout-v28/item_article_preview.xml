@@ -8,7 +8,7 @@
     app:cardCornerRadius="15dp"
     android:padding="8dp"
     android:layout_margin="6dp"
-    android:outlineAmbientShadowColor="#2E2B2B"
+    android:outlineAmbientShadowColor="#706D6D"
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout

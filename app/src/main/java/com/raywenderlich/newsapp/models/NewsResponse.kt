@@ -1,4 +1,6 @@
-package com.raywenderlich.newsapp
+package com.raywenderlich.newsapp.models
+
+import com.raywenderlich.newsapp.models.Article
 
 data class NewsResponse(
     val articles: List<Article>,

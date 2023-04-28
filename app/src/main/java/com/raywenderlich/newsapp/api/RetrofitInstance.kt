@@ -1,11 +1,10 @@
 package com.raywenderlich.newsapp.api
 
-import com.raywenderlich.newsapp.constants.Constants.Companion.BASE_URL
+import com.raywenderlich.newsapp.Utility.Constants.Companion.BASE_URL
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 
 class RetrofitInstance {
 

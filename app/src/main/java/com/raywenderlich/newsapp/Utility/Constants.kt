@@ -1,4 +1,4 @@
-package com.raywenderlich.newsapp.constants
+package com.raywenderlich.newsapp.Utility
 
 class Constants {
     companion object{

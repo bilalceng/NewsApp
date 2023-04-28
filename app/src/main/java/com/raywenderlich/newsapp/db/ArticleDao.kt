@@ -2,7 +2,7 @@ package com.raywenderlich.newsapp.db
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.raywenderlich.newsapp.Article
+import com.raywenderlich.newsapp.models.Article
 
 @Dao
 interface ArticleDao {
