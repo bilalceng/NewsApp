@@ -33,7 +33,4 @@ class NewsRepository(var context: Context) {
         return articleDao.getAllArticles()
     }
 
-    fun createArticle(): Article{
-        return Article()
-    }
 }

@@ -115,11 +115,8 @@ class SearchNewsFragment : Fragment(R.layout.fragment_search_news) {
     private fun goToArticleFragment(){
 
         adapter.setOnItemClickListener { article ->
-            val bundle = Bundle()
-            bundle.putSerializable("bilal",article)
-
-            findNavController().navigate(R.id.action_searchNewsFragment_to_articleFragment,
-                bundle)
+            val action = SearchNewsFragmentDirections.actionSearchNewsFragmentToArticleFragment(article)
+            findNavController().navigate(action)
 
         }
     }

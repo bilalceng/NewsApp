@@ -35,9 +35,6 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_breaking_news, container, false)
 
-
-
-
         newsViewModel = (activity as NewsActivity).newsViewModel
         getLiveResponses()
         recyclerView = view.findViewById(R.id.rvBreakingNews)
@@ -69,7 +66,7 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
                     Log.e(TAG , "error: ${Response.message}")
                 }
 
-                is Resource.Loading ->{
+                is Resource.Loading -> {
                     showProgress()
                 }
             }
@@ -83,11 +80,10 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
     private fun goToArticleFragment(){
 
         adapter.setOnItemClickListener { article ->
-            val bundle = Bundle()
-            bundle.putSerializable("bilal",article)
 
-            findNavController().navigate(R.id.action_breakingNewsFragment_to_articleFragment,
-            bundle)
+            val action = BreakingNewsFragmentDirections.actionBreakingNewsFragmentToArticleFragment(article)
+            findNavController().navigate(action)
+
 
         }
     }

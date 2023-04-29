@@ -16,6 +16,8 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+
+
     </fragment>
 
 
@@ -51,8 +53,19 @@
         android:id="@+id/articleFragment"
         android:name="com.raywenderlich.newsapp.ui.fragments.ArticleFragment"
         android:label="ArticleFragment" >
+
+
         <argument
-            android:name="article"
+            android:name="myArticle"
             app:argType="com.raywenderlich.newsapp.models.Article" />
+        <action
+            android:id="@+id/action_articleFragment_to_searchNewsFragment"
+            app:destination="@id/searchNewsFragment" />
+        <action
+            android:id="@+id/action_articleFragment_to_breakingNewsFragment"
+            app:destination="@id/breakingNewsFragment" />
+        <action
+            android:id="@+id/action_articleFragment_to_savedNewsFragment"
+            app:destination="@id/savedNewsFragment" />
     </fragment>
 </navigation>

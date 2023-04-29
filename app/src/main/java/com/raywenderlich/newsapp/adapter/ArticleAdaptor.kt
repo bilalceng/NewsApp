@@ -49,7 +49,7 @@ class ArticleAdapter : RecyclerView.Adapter<ArticleAdapter.ArticleViewHolder>() 
 
 
         Glide.with(holder.itemView).load(currentArticle.urlToImage).into(image)
-        source.text = currentArticle.source.name
+        source.text = currentArticle.source!!.name
         publishAt.text = currentArticle.publishedAt
         title.text = currentArticle.title
         description.text = currentArticle.description

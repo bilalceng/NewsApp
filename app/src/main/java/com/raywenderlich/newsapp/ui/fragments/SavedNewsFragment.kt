@@ -1,6 +1,7 @@
 package com.raywenderlich.newsapp.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -43,11 +44,8 @@ class SavedNewsFragment : Fragment(R.layout.fragment_saved_news) {
     private fun goToArticleFragment(){
 
         adapter.setOnItemClickListener { article ->
-            val bundle = Bundle()
-            bundle.putSerializable("bilal",article)
-
-            findNavController().navigate(R.id.action_savedNewsFragment_to_articleFragment,
-                bundle)
+            val action = SavedNewsFragmentDirections.actionSavedNewsFragmentToArticleFragment(article)
+            findNavController().navigate(action)
 
         }
     }
