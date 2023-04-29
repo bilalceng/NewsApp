@@ -17,7 +17,9 @@ class NewsRepository(var context: Context) {
         return  RetrofitInstance.api.getBreakingNews(country,page)
     }
 
-
+    suspend fun searchForNews(searchQuery: String, page: Int): Response<NewsResponse>{
+        return RetrofitInstance.api.searchForNews(searchQuery, page)
+    }
     suspend fun deleteArticle(article: Article){
         articleDao.deleteArticle(article)
 
