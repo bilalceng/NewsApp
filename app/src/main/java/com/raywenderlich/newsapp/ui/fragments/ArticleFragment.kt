@@ -10,6 +10,8 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.navArgument
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import com.raywenderlich.newsapp.R
 import com.raywenderlich.newsapp.models.Article
 import com.raywenderlich.newsapp.ui.NewsActivity
@@ -19,6 +21,7 @@ import com.raywenderlich.newsapp.viewModel.NewsViewModel
 class ArticleFragment : Fragment(R.layout.fragment_article) {
 
     private lateinit var newsViewModel: NewsViewModel
+    private lateinit var fabButton: FloatingActionButton
     private lateinit var webView: WebView
     private val args: ArticleFragmentArgs by navArgs<ArticleFragmentArgs>()
     override fun onCreateView(
@@ -31,9 +34,12 @@ class ArticleFragment : Fragment(R.layout.fragment_article) {
 
         newsViewModel = (activity as NewsActivity).newsViewModel
        val view =  inflater.inflate(R.layout.fragment_article, container, false)
+        fabButton = view.findViewById(R.id.fab)
 
         webView = view.findViewById(R.id.webView)
         getArticles()
+
+
 
         return view
     }
@@ -43,8 +49,19 @@ class ArticleFragment : Fragment(R.layout.fragment_article) {
         Log.d("yarak","${args.myArticle}")
         val article = args.myArticle
         webView.webViewClient = WebViewClient()
-        webView.loadUrl(article.url)
+        article?.let { it.url }?.let { webView.loadUrl(it) }
 
+        fabButton.setOnClickListener {
+            saveCurrentArticle(article)
+            Snackbar.make(it,"article saved successfully.", Snackbar.LENGTH_SHORT).show()
+
+        }
+
+
+    }
+
+    private fun saveCurrentArticle(article: Article){
+        newsViewModel.upsert(article)
     }
 
 

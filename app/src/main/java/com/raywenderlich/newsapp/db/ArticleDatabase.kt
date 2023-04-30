@@ -11,7 +11,7 @@ import com.raywenderlich.newsapp.Utility.Converters
 
 @Database(
     entities = [Article::class],
-    version = 1
+    version = 3
 )
 
 @TypeConverters(Converters::class)

@@ -22,15 +22,19 @@ class NewsViewModel( application:Application ): AndroidViewModel(application){
 
     var breakingNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
 
+
+
     var breakingNewsPage = 1
+    var breakingNewsResponse: NewsResponse? = null
 
 
     var searchNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
 
     var searchNewsPage = 1
+    val searchNewsResponse: NewsResponse? = null
 
     init {
-        getBreakingNews("us")
+        getBreakingNews("tr")
     }
 
     fun getBreakingNews(countryCode: String): Job {
@@ -47,8 +51,16 @@ class NewsViewModel( application:Application ): AndroidViewModel(application){
 
     private fun handleBreakingNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
             if(response.isSuccessful){
+                breakingNewsPage++
                 response.body()?.let{ result ->
-                    return Resource.Success(result)
+                    if(breakingNewsResponse == null){
+                        breakingNewsResponse = result
+                    }else{
+                        val oldArticles = breakingNewsResponse?.articles
+                        val newArticles = result.articles
+                        oldArticles?.addAll(newArticles)
+                    }
+                    return Resource.Success(breakingNewsResponse?:result)
                 }
             }
 
@@ -79,6 +91,18 @@ class NewsViewModel( application:Application ): AndroidViewModel(application){
         return Resource.Error(response.message())
 
     }
+
+    fun upsert(article: Article) = viewModelScope.launch {
+        newsRepo.upsert(article)
+    }
+
+    fun getSavedNews() = newsRepo.getAllArticle()
+
+    fun deleteArticle(article:Article) = viewModelScope.launch {
+        newsRepo.deleteArticle(article)
+    }
+
+
 
 
 

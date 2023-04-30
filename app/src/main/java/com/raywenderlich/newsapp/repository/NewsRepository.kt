@@ -13,7 +13,7 @@ class NewsRepository(var context: Context) {
     val articleDao = db.getArticleDao()
 
 
-    suspend fun getBreakıngNews(country: String, page: Int): Response<NewsResponse> {
+    suspend fun getBreakingNews(country: String, page: Int): Response<NewsResponse> {
         return  RetrofitInstance.api.getBreakingNews(country,page)
     }
 

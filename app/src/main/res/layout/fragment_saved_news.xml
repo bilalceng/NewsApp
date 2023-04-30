@@ -6,7 +6,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvSavedNews"
-        android:background="@color/recycler_background"
+        android:background="#FDBDE0ED"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
