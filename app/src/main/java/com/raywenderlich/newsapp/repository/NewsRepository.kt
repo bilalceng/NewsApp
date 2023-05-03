@@ -6,6 +6,7 @@ import com.raywenderlich.newsapp.api.RetrofitInstance
 import com.raywenderlich.newsapp.db.ArticleDatabase
 import com.raywenderlich.newsapp.models.Article
 import com.raywenderlich.newsapp.models.NewsResponse
+import retrofit2.Call
 import retrofit2.Response
 
 class NewsRepository(var context: Context) {

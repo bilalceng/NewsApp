@@ -1,5 +1,6 @@
 package com.raywenderlich.newsapp.ui.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -21,6 +22,7 @@ import com.raywenderlich.newsapp.viewModel.NewsViewModel
 class ArticleFragment : Fragment(R.layout.fragment_article) {
 
     private lateinit var newsViewModel: NewsViewModel
+    private lateinit var shareButton: FloatingActionButton
     private lateinit var fabButton: FloatingActionButton
     private lateinit var webView: WebView
     private val args: ArticleFragmentArgs by navArgs<ArticleFragmentArgs>()
@@ -34,6 +36,7 @@ class ArticleFragment : Fragment(R.layout.fragment_article) {
 
         newsViewModel = (activity as NewsActivity).newsViewModel
        val view =  inflater.inflate(R.layout.fragment_article, container, false)
+        shareButton = view.findViewById(R.id.ShareFab)
         fabButton = view.findViewById(R.id.fab)
 
         webView = view.findViewById(R.id.webView)
@@ -51,6 +54,10 @@ class ArticleFragment : Fragment(R.layout.fragment_article) {
         webView.webViewClient = WebViewClient()
         article?.let { it.url }?.let { webView.loadUrl(it) }
 
+        shareButton.setOnClickListener {
+            shareNews(article)
+        }
+
         fabButton.setOnClickListener {
             saveCurrentArticle(article)
             Snackbar.make(it,"article saved successfully.", Snackbar.LENGTH_SHORT).show()
@@ -64,6 +71,21 @@ class ArticleFragment : Fragment(R.layout.fragment_article) {
         newsViewModel.upsert(article)
     }
 
+    fun shareNews(article: Article){
+
+        val sendIntent = Intent()
+        sendIntent.action = Intent.ACTION_SEND
+
+        sendIntent.putExtra(Intent.EXTRA_TEXT,
+            "Check out ${article.title} at:\n${article.url}")
+        sendIntent.putExtra(Intent.EXTRA_SUBJECT,
+            "Sharing ${article.source}")
+
+        sendIntent.type = "text/plain"
+
+        startActivity(sendIntent)
+
+    }
 
 
 

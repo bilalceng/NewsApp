@@ -1,6 +1,7 @@
 package com.raywenderlich.newsapp.ui.fragments
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -17,20 +18,18 @@ import com.raywenderlich.newsapp.R
 import com.raywenderlich.newsapp.Utility.Constants.Companion.QUERY_PAGE_SIZE
 import com.raywenderlich.newsapp.Utility.Resource
 import com.raywenderlich.newsapp.adapter.ArticleAdapter
+import com.raywenderlich.newsapp.models.Article
 import com.raywenderlich.newsapp.ui.NewsActivity
 import com.raywenderlich.newsapp.viewModel.NewsViewModel
 
 
- const val TAG = "BreakingNewsFragment"
+ const val TAG = "breakMe"
 class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
 
     private lateinit var progressBar: ProgressBar
-
-    var isLoading = false
-    var isLastPage = false
-    var isScrolling = false
-
-    private lateinit var scrollListener: RecyclerView.OnScrollListener
+    private var isloading = false
+    private var isScrolling = false
+    private var isLastPage = false
 
     private lateinit var newsViewModel: NewsViewModel
     lateinit var adapter: ArticleAdapter
@@ -48,7 +47,7 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
         recyclerView = view.findViewById(R.id.rvBreakingNews)
 
         progressBar = view.findViewById(R.id.paginationProgressBar)
-        recyclerViewScrollListener()
+
         setUpRecyclerView()
          goToArticleFragment()
 
@@ -68,8 +67,14 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
                     Response.data?.let { newsResponse ->
 
                     adapter.differ.submitList(newsResponse.articles.toList())
-                        val totalPages = newsResponse.totalResults / QUERY_PAGE_SIZE + 2
+                    val totalPages = newsResponse.totalResults/ QUERY_PAGE_SIZE + 2
+                        Log.d(TAG, " totalPages : $totalPages")
                         isLastPage = newsViewModel.breakingNewsPage == totalPages
+                        //Log.d(TAG, " isLastPage : $isLastPage")
+                        if (isLastPage){
+                            recyclerView.setPadding(0, 0, 0, 0)
+                        }
+
 
                     }
                 }
@@ -101,48 +106,63 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
         }
     }
 
+   private fun  scrollListenerForRecyclerView(): RecyclerView.OnScrollListener {
+       val scrollListener = object : RecyclerView.OnScrollListener() {
 
-    private fun recyclerViewScrollListener(){
-         scrollListener = object: RecyclerView.OnScrollListener(){
+           override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+               super.onScrollStateChanged(recyclerView, newState)
+               if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                   isScrolling = true
+               }
+           }
 
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
+           override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+               super.onScrolled(recyclerView, dx, dy)
 
-                if(newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
-                    isScrolling = true
+               val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+               var firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+               //Log.d(TAG, " firstVisiblePosition : $firstVisibleItemPosition")
+               var visibleItemCount = layoutManager.childCount
+              // Log.d(TAG, " visibleItemCount : $visibleItemCount")
+               var totalItemCount = layoutManager.itemCount
+               //Log.d(TAG, " totalItemCount : $totalItemCount")
 
-                }
-            }
+               val isNotLoadingAndNotLastPage = !isLastPage && !isloading
+              // Log.d(TAG, " isNotLoadingAndIsNotLastPage : $isNotLoadingAndNotLastPage")
+               val isLastItem = firstVisibleItemPosition + visibleItemCount >= totalItemCount
+               //Log.d(TAG, " isLastItem boolean : $isLastItem")
+               val isNotAtTheBeginning = firstVisibleItemPosition >= 0
+               //Log.d(TAG, " isNotAtTheBeginning boolean : $isNotAtTheBeginning")
+               val isTotalMoreThanVisible = totalItemCount >= QUERY_PAGE_SIZE
+               //Log.d(TAG, " isTotalMoreThanVisible boolean : $isTotalMoreThanVisible")
 
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
+               var shouldPaginate = isNotLoadingAndNotLastPage && isLastItem && isNotAtTheBeginning
+                       && isTotalMoreThanVisible && isScrolling
 
-                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-                val visibleItemCount = layoutManager.childCount
-                val totalItemCount = layoutManager.itemCount
+               //Log.d(TAG, " paginate boolean : $shouldPaginate")
 
-                val isNotLoadingAndIsNotAtLastPage = !isLoading && !isLastPage
-                val isAtLastItem = firstVisibleItemPosition + visibleItemCount >= totalItemCount
-                val isNotAtBeginning = firstVisibleItemPosition > 0
-                val isTotalMoreThanVisible = totalItemCount > QUERY_PAGE_SIZE
-                val shouldPaginate = isNotLoadingAndIsNotAtLastPage && isAtLastItem && isNotAtBeginning
-                        && isTotalMoreThanVisible
+               if (shouldPaginate) {
+                   Log.d(TAG, " paginate boolean : ddvföbfbgbgbmkgb dkfmdfekfmrfrı jdıjdenufefbefbrfhb bfebfbfrb r")
+                   newsViewModel.getBreakingNews("us")
+                   isScrolling = false
+               } else {
 
-                if (shouldPaginate){
+               }
 
-                    newsViewModel.getBreakingNews("us")
-                    isScrolling = false
-                }
-            }
-        }
-    }
+           }
+       }
+       return scrollListener
+   }
+
+
+
 
     private fun setUpRecyclerView(){
         adapter = ArticleAdapter()
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        recyclerView.addOnScrollListener(this@BreakingNewsFragment.scrollListener)
+        recyclerView.addOnScrollListener(scrollListenerForRecyclerView())
+
 
     }
 
@@ -164,14 +184,15 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
     private fun showProgress() {
         progressBar.visibility = ProgressBar.VISIBLE
         disableUserInteraction()
-        isLoading = true
+        isloading = true
+
     }
 
 
     private fun hideProgress() {
         progressBar.visibility = ProgressBar.GONE
         enableUserInteraction()
-        isLoading = false
+        isloading = false
     }
-
+    
 }

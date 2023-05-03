@@ -1,18 +1,24 @@
 package com.raywenderlich.newsapp.viewModel
 
 import android.app.Application
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.raywenderlich.newsapp.Utility.Resource
-import com.raywenderlich.newsapp.api.RetrofitInstance
 import com.raywenderlich.newsapp.models.Article
 import com.raywenderlich.newsapp.models.NewsResponse
 import com.raywenderlich.newsapp.repository.NewsRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import retrofit2.Response
+import java.io.IOException
 
 class NewsViewModel( application:Application ): AndroidViewModel(application){
 
@@ -27,23 +33,41 @@ class NewsViewModel( application:Application ): AndroidViewModel(application){
     var breakingNewsPage = 1
     var breakingNewsResponse: NewsResponse? = null
 
+    var searchNewsPage = 1
+    var searchNewsResponse: NewsResponse? = null
+
 
     var searchNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
 
-    var searchNewsPage = 1
-    val searchNewsResponse: NewsResponse? = null
+
+
 
     init {
-        getBreakingNews("tr")
+        getBreakingNews("us")
     }
 
     fun getBreakingNews(countryCode: String): Job {
 
         val job =  viewModelScope.launch {
             breakingNews.postValue(Resource.Loading())
-            val response = RetrofitInstance.api.getBreakingNews(countryCode,breakingNewsPage)
+                try {
 
-            breakingNews.postValue(handleBreakingNewsResponse(response))
+                    if(isInternetAccessible(getApplication())){
+                        Log.d("BreakMe"," waooowwwww i am here")
+                        val response = newsRepo.getBreakingNews(countryCode,breakingNewsPage)
+                        breakingNews.postValue(handleBreakingNewsResponse(response))
+                    }else{
+                        Toast.makeText(getApplication(), "internet is not accessible", Toast.LENGTH_SHORT).show()
+                    }
+
+                }catch (t:Throwable){
+
+                    when(t){
+                        is IOException ->  Toast.makeText(getApplication(), "internet is not accessible", Toast.LENGTH_SHORT).show()
+                    }
+
+                }
+
         }
 
         return job
@@ -51,16 +75,22 @@ class NewsViewModel( application:Application ): AndroidViewModel(application){
 
     private fun handleBreakingNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
             if(response.isSuccessful){
-                breakingNewsPage++
                 response.body()?.let{ result ->
+                    breakingNewsPage++
+
                     if(breakingNewsResponse == null){
                         breakingNewsResponse = result
                     }else{
-                        val oldArticles = breakingNewsResponse?.articles
-                        val newArticles = result.articles
+                        var oldArticles = breakingNewsResponse?.articles
+                        var newArticles = result.articles
                         oldArticles?.addAll(newArticles)
+
+
+
                     }
-                    return Resource.Success(breakingNewsResponse?:result)
+                    return Resource.Success(result)
+
+
                 }
             }
 
@@ -69,17 +99,42 @@ class NewsViewModel( application:Application ): AndroidViewModel(application){
     }
 
 
+
     fun getSearchNews(searchQuery: String): Job {
 
-        val job =  viewModelScope.launch {
+        val job = viewModelScope.launch {
             searchNews.postValue(Resource.Loading())
-            val response = newsRepo.searchForNews(searchQuery,searchNewsPage)
+            try {
 
-            searchNews.postValue(handleSearchNewsResponse(response))
+                if (isInternetAccessible(getApplication())) {
+                    Log.d("BreakMe", " waooowwwww i am here")
+                    val response = newsRepo.searchForNews(searchQuery, searchNewsPage)
+                    searchNews.postValue(handleSearchNewsResponse(response))
+                } else {
+                    Toast.makeText(
+                        getApplication(),
+                        "internet is not accessible",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+            } catch (t: Throwable) {
+
+                when (t) {
+                    is IOException -> Toast.makeText(
+                        getApplication(),
+                        "internet is not accessible",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                }
+
+            }
+
         }
-
         return job
     }
+
 
     private fun handleSearchNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
         if(response.isSuccessful){
@@ -103,10 +158,23 @@ class NewsViewModel( application:Application ): AndroidViewModel(application){
     }
 
 
+    fun isInternetAccessible( context: Context): Boolean{
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            val network = connectivityManager.activeNetwork ?: return false
+            val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+            return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
 
-
-
-
+        }else{
+            val networkInfo = connectivityManager.activeNetworkInfo ?: return false
+            return networkInfo.isConnected
+        }
+    }
 
 }
+
+
+
+
+

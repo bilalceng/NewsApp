@@ -8,7 +8,24 @@
     <WebView
         android:id="@+id/webView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" >
+
+
+    </WebView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/ShareFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginBottom="32dp"
+        android:layout_x="183dp"
+        android:layout_y="615dp"
+        android:contentDescription="TODO"
+        android:src="@drawable/share"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
@@ -21,5 +38,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:contentDescription="TODO" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
