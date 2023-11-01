@@ -15,6 +15,6 @@ class SplashActivity : AppCompatActivity() {
             val mainIntent = Intent(this, NewsActivity::class.java)
             startActivity(mainIntent)
             finish()
-        }, 3000) // 3000 milliseconds = 3 seconds delay
+        }, 3000)
     }
 }

@@ -1,6 +1,7 @@
 package com.raywenderlich.newsapp.ui.fragments
 
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -57,6 +58,7 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
     }
 
 
+    @SuppressLint("SuspiciousIndentation")
     private fun getLiveResponses(){
         newsViewModel.breakingNews.observe(viewLifecycleOwner){ Response ->
 
