@@ -31,9 +31,6 @@ class ArticleFragment : Fragment(R.layout.fragment_article) {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        Log.d("yarak","${args.myArticle}")
-        Log.d("yarak","burdayım2")
-
         newsViewModel = (activity as NewsActivity).newsViewModel
        val view =  inflater.inflate(R.layout.fragment_article, container, false)
         shareButton = view.findViewById(R.id.ShareFab)
@@ -49,7 +46,6 @@ class ArticleFragment : Fragment(R.layout.fragment_article) {
 
 
     private fun getArticles(){
-        Log.d("yarak","${args.myArticle}")
         val article = args.myArticle
         webView.webViewClient = WebViewClient()
         article?.let { it.url }?.let { webView.loadUrl(it) }
